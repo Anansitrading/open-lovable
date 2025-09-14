@@ -175,6 +175,32 @@ export const StatusToolSchema = z.object({
   verbose: z.boolean().default(false).describe("Include detailed status information"),
 });
 
+// Additional stub tool schemas
+export const IterateToolSchema = z.object({
+  prompt: z.string().describe("Iteration request or refinement description"),
+  focus: z.enum(['functionality', 'ui', 'performance', 'all']).optional().default('all')
+});
+
+export const DeployToolSchema = z.object({
+  environment: z.enum(['staging', 'production']).optional().default('staging'),
+  platform: z.string().optional().describe("Target deployment platform")
+});
+
+export const AnalyzeToolSchema = z.object({
+  type: z.enum(['quality', 'performance', 'security', 'all']).optional().default('all'),
+  files: z.array(z.string()).optional().describe("Specific files to analyze")
+});
+
+export const OptimizeToolSchema = z.object({
+  target: z.enum(['bundle-size', 'performance', 'memory', 'all']).optional().default('performance'),
+  aggressive: z.boolean().optional().default(false)
+});
+
+export const CollaborateToolSchema = z.object({
+  action: z.enum(['invite', 'share', 'sync']).describe("Collaboration action"),
+  workspace: z.string().optional().describe("Workspace identifier")
+});
+
 // ===== Tool Input/Output Types =====
 
 export type SpecifyInput = z.infer<typeof SpecifyToolSchema>;
@@ -184,6 +210,11 @@ export type ScrapeInput = z.infer<typeof ScrapeToolSchema>;
 export type GenerateInput = z.infer<typeof GenerateToolSchema>;
 export type PreviewInput = z.infer<typeof PreviewToolSchema>;
 export type StatusInput = z.infer<typeof StatusToolSchema>;
+export type IterateInput = z.infer<typeof IterateToolSchema>;
+export type DeployInput = z.infer<typeof DeployToolSchema>;
+export type AnalyzeInput = z.infer<typeof AnalyzeToolSchema>;
+export type OptimizeInput = z.infer<typeof OptimizeToolSchema>;
+export type CollaborateInput = z.infer<typeof CollaborateToolSchema>;
 
 // ===== Tool Response Types =====
 
@@ -240,6 +271,74 @@ export interface StatusResponse extends ToolResponse<{
     action: string;
     details: string;
   }>;
+  progress: {
+    percentage: number;
+    phase: string;
+    phasesCompleted: number;
+    totalPhases: number;
+    artifactsPresent: number;
+    totalArtifacts: number;
+  };
+  fileHealth: {
+    totalFiles: number;
+    existingFiles: number;
+    missingFiles: string[];
+  };
+  nextSteps: string[];
+  verbose?: any;
+}> {}
+
+// Stub tool response types
+export interface IterateResponse extends ToolResponse<{
+  changes: Array<{
+    file: string;
+    type: 'modified' | 'created' | 'deleted';
+    description: string;
+  }>;
+  summary: string;
+}> {}
+
+export interface DeployResponse extends ToolResponse<{
+  deploymentUrl: string;
+  environment: string;
+  status: 'pending' | 'building' | 'success' | 'error';
+}> {}
+
+export interface AnalyzeResponse extends ToolResponse<{
+  analysis: {
+    quality: number;
+    performance: number;
+    security: number;
+  };
+  issues: Array<{
+    type: string;
+    severity: 'low' | 'medium' | 'high';
+    file: string;
+    description: string;
+  }>;
+  recommendations: string[];
+}> {}
+
+export interface OptimizeResponse extends ToolResponse<{
+  optimizations: Array<{
+    type: string;
+    description: string;
+    impact: 'low' | 'medium' | 'high';
+  }>;
+  metrics: {
+    bundleSizeReduction: number;
+    performanceGain: number;
+  };
+}> {}
+
+export interface CollaborateResponse extends ToolResponse<{
+  workspace: {
+    id: string;
+    url: string;
+    members: string[];
+  };
+  action: string;
+  status: string;
 }> {}
 
 // ===== Error Types =====

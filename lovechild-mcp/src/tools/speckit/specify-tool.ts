@@ -41,35 +41,18 @@ export const SpecifyTool: ToolDefinition = {
           url: fromUrl 
         });
 
-        try {
-          // Import and use Firecrawl scraping tool
-          const { ScrapeTool } = await import('../lovable/scrape-tool.js');
-          const scrapeResult = await ScrapeTool.handler({
-            url: fromUrl,
-            format: 'markdown',
-            includeImages: false,
-            maxDepth: 1
-          }, context);
-
-          if (scrapeResult.success && scrapeResult.data) {
-            scrapedContext = {
-              url: fromUrl,
-              content: scrapeResult.data.content.substring(0, 5000), // Limit context size
-              timestamp: new Date()
-            };
-            
-            contextLogger.info('Website scraped successfully', {
-              correlationId,
-              contentLength: scrapeResult.data.content.length,
-              title: scrapeResult.data.metadata?.title
-            });
-          }
-        } catch (scrapeError) {
-          contextLogger.warn('Failed to scrape website, proceeding without context', {
-            correlationId,
-            error: scrapeError instanceof Error ? scrapeError.message : String(scrapeError)
-          });
-        }
+        // TODO: Implement Firecrawl web scraping in Phase 2
+        // For now, use a placeholder
+        scrapedContext = {
+          url: fromUrl,
+          content: `# Website Context Placeholder\n\nURL: ${fromUrl}\n\nWeb scraping functionality will be implemented in Phase 2.\nFor now, please provide detailed requirements in the description field.`,
+          timestamp: new Date()
+        };
+        
+        contextLogger.info('Using web scraping placeholder', {
+          correlationId,
+          url: fromUrl
+        });
       }
 
       // Prepare context for AI generation

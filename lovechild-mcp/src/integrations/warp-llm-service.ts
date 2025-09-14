@@ -119,7 +119,7 @@ export class WarpLLMService {
     warpArgs.push('--prompt', prompt);
 
     return new Promise((resolve, reject) => {
-      const process = spawn('warp', warpArgs, {
+      const childProcess = spawn('warp', warpArgs, {
         stdio: ['pipe', 'pipe', 'pipe'],
         cwd: workingDir,
         env: {
@@ -130,7 +130,7 @@ export class WarpLLMService {
         }
       });
 
-      this.activeProcesses.add(process);
+      this.activeProcesses.add(childProcess);
       
       let output = '';
       let errorOutput = '';
@@ -145,12 +145,12 @@ export class WarpLLMService {
             command: warpArgs.join(' ')
           });
           
-          process.kill('SIGTERM');
+          childProcess.kill('SIGTERM');
           
           // Force kill after grace period
           setTimeout(() => {
-            if (!process.killed) {
-              process.kill('SIGKILL');
+            if (!childProcess.killed) {
+              childProcess.kill('SIGKILL');
             }
           }, 5000);
           
@@ -159,7 +159,7 @@ export class WarpLLMService {
       }
 
       // Handle stdout (main output)
-      process.stdout.on('data', (data: Buffer) => {
+      childProcess.stdout.on('data', (data: Buffer) => {
         const chunk = data.toString();
         output += chunk;
         
@@ -169,7 +169,7 @@ export class WarpLLMService {
       });
 
       // Handle stderr (errors and warnings)
-      process.stderr.on('data', (data: Buffer) => {
+      childProcess.stderr.on('data', (data: Buffer) => {
         const chunk = data.toString();
         errorOutput += chunk;
         
@@ -192,8 +192,8 @@ export class WarpLLMService {
       });
 
       // Handle process completion
-      process.on('close', (code: number | null, signal: string | null) => {
-        this.activeProcesses.delete(process);
+      childProcess.on('close', (code: number | null, signal: string | null) => {
+        this.activeProcesses.delete(childProcess);
         
         if (timeoutHandle) {
           clearTimeout(timeoutHandle);
@@ -216,8 +216,8 @@ export class WarpLLMService {
       });
 
       // Handle process errors
-      process.on('error', (error: Error) => {
-        this.activeProcesses.delete(process);
+      childProcess.on('error', (error: Error) => {
+        this.activeProcesses.delete(childProcess);
         
         if (timeoutHandle) {
           clearTimeout(timeoutHandle);

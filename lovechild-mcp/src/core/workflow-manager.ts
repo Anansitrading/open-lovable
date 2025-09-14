@@ -53,9 +53,9 @@ export class WorkflowManager {
         };
         
         logger.info('Loaded existing workflow', {
-          workflowId: this.currentWorkflow.id,
-          phase: this.currentWorkflow.phase,
-          version: this.currentWorkflow.metadata.version
+          workflowId: this.currentWorkflow?.id,
+          phase: this.currentWorkflow?.phase,
+          version: this.currentWorkflow?.metadata.version
         });
       }
     } catch (error) {

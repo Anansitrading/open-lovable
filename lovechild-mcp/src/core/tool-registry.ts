@@ -64,40 +64,34 @@ export class ToolRegistry {
   }
 
   private async registerLovableTools(): Promise<void> {
-    // Import Lovable tools dynamically
-    const { ScrapeTool } = await import('../tools/lovable/scrape-tool.js');
-    const { GenerateTool } = await import('../tools/lovable/generate-tool.js');
-    const { PreviewTool } = await import('../tools/lovable/preview-tool.js');
+    // Import stub tools for future Lovable functionality (Phase 3)
+    const { GenerateTool, PreviewTool } = await import('../tools/stubs.js');
 
-    this.registerTool(ScrapeTool);
     this.registerTool(GenerateTool);
     this.registerTool(PreviewTool);
 
-    logger.info('Lovable tools registered', { count: 3 });
+    logger.info('Lovable tools registered (stubs)', { count: 2 });
   }
 
   private async registerHybridTools(): Promise<void> {
-    // Import hybrid workflow tools dynamically
-    const { ReimagnineTool } = await import('../tools/hybrid/reimagine-tool.js');
-    const { CloneTool } = await import('../tools/hybrid/clone-tool.js');
-    const { IterateTool } = await import('../tools/hybrid/iterate-tool.js');
+    // Import stub tools for future hybrid workflow functionality (Phase 4)
+    const { IterateTool, DeployTool } = await import('../tools/stubs.js');
 
-    this.registerTool(ReimagnineTool);
-    this.registerTool(CloneTool);
     this.registerTool(IterateTool);
+    this.registerTool(DeployTool);
 
-    logger.info('Hybrid workflow tools registered', { count: 3 });
+    logger.info('Hybrid workflow tools registered (stubs)', { count: 2 });
   }
 
   private async registerUtilityTools(): Promise<void> {
-    // Import utility tools dynamically
-    const { HealthCheckTool } = await import('../tools/utility/health-check-tool.js');
-    const { ConfigTool } = await import('../tools/utility/config-tool.js');
+    // Import stub tools for advanced features (Phase 5)
+    const { AnalyzeTool, OptimizeTool, CollaborateTool } = await import('../tools/stubs.js');
 
-    this.registerTool(HealthCheckTool);
-    this.registerTool(ConfigTool);
+    this.registerTool(AnalyzeTool);
+    this.registerTool(OptimizeTool);
+    this.registerTool(CollaborateTool);
 
-    logger.info('Utility tools registered', { count: 2 });
+    logger.info('Utility tools registered (stubs)', { count: 3 });
   }
 
   registerTool(tool: ToolDefinition): void {
