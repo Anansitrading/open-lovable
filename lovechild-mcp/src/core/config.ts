@@ -106,6 +106,13 @@ export class ConfigManager {
       throw new ConfigurationError('FIRECRAWL_API_KEY is required for web scraping functionality');
     }
 
+    // Validate E2B API key (optional for now, will be required when E2B tools are used)
+    const hasE2B = !!process.env.E2B_API_KEY;
+    if (!hasE2B) {
+      // Log warning but don't fail - E2B is optional until user tries to use sandbox features
+      console.warn('Warning: E2B_API_KEY not configured. Sandbox features will not be available.');
+    }
+
     return {
       ai: {
         defaultProvider: (process.env.DEFAULT_AI_PROVIDER as 'anthropic' | 'openai' | 'groq') || 'anthropic',
@@ -119,6 +126,13 @@ export class ConfigManager {
         firecrawl: {
           apiKey: process.env.FIRECRAWL_API_KEY,
           baseUrl: process.env.FIRECRAWL_BASE_URL || 'https://api.firecrawl.dev',
+        },
+        e2b: {
+          apiKey: process.env.E2B_API_KEY || '',
+          defaultTemplate: process.env.E2B_TEMPLATE || 'nodejs',
+          timeoutMs: parseInt(process.env.E2B_TIMEOUT || '300000'),
+          maxSessions: parseInt(process.env.E2B_MAX_SESSIONS || '5'),
+          keepAliveMs: parseInt(process.env.E2B_KEEP_ALIVE || '600000'),
         },
       },
       workspace: {

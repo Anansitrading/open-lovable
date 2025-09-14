@@ -64,15 +64,16 @@ export class ToolRegistry {
   }
 
   private async registerLovableTools(): Promise<void> {
-    // Import real scrape tool and stub tools
+    // Import real scrape tool and E2B preview tool
     const { ScrapeTool } = await import('../tools/scrape-tool.js');
-    const { GenerateTool, PreviewTool } = await import('../tools/stubs.js');
+    const { E2BPreviewTool } = await import('../tools/e2b-preview-tool.js');
+    const { GenerateTool } = await import('../tools/stubs.js');
 
     this.registerTool(ScrapeTool);
+    this.registerTool(E2BPreviewTool);
     this.registerTool(GenerateTool);
-    this.registerTool(PreviewTool);
 
-    logger.info('Lovable tools registered', { count: 3, implemented: ['scrape'], stubs: ['generate', 'preview'] });
+    logger.info('Lovable tools registered', { count: 3, implemented: ['scrape', 'preview'], stubs: ['generate'] });
   }
 
   private async registerHybridTools(): Promise<void> {

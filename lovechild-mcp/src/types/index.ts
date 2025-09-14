@@ -32,6 +32,13 @@ export const LoveChildConfigSchema = z.object({
       apiKey: z.string(),
       baseUrl: z.string().optional().default('https://api.firecrawl.dev'),
     }),
+    e2b: z.object({
+      apiKey: z.string(),
+      defaultTemplate: z.string().optional().default('nodejs'),
+      timeoutMs: z.number().optional().default(300000),
+      maxSessions: z.number().optional().default(5),
+      keepAliveMs: z.number().optional().default(600000),
+    }),
   }),
   workspace: z.object({
     directory: z.string().default('./workspace'),
@@ -103,6 +110,10 @@ export interface WorkflowState {
     version: number;
     lastCommand?: string;
   };
+  // Additional fields for E2B sandbox integration
+  currentStep?: string;
+  projectType?: string;
+  status?: 'pending' | 'in_progress' | 'completed' | 'failed' | 'cancelled';
 }
 
 // ===== Sandbox Types =====
@@ -126,6 +137,68 @@ export interface CommandResult {
   stderr: string;
   exitCode: number;
   success: boolean;
+}
+
+// E2B-specific types
+export interface E2BSandboxSession {
+  id: string;
+  sessionId: string;
+  status: 'active' | 'idle' | 'error' | 'terminated';
+  createdAt: Date;
+  lastActivity: Date;
+  files: string[];
+  previewUrl?: string;
+  previewPort?: number;
+  workflowId?: string;
+  metadata: {
+    projectType: 'react' | 'vite' | 'node' | 'python';
+    template?: string;
+    environment: Record<string, string>;
+    currentStep?: string;
+    workflowStatus?: 'pending' | 'in_progress' | 'completed' | 'failed' | 'cancelled';
+  };
+}
+
+export interface E2BFileOperation {
+  type: 'write' | 'read' | 'delete' | 'mkdir';
+  path: string;
+  content?: string;
+  timestamp: Date;
+}
+
+export interface E2BCommandExecution {
+  command: string;
+  workingDir?: string;
+  environment?: Record<string, string>;
+  timeout?: number;
+  background?: boolean;
+}
+
+export interface E2BExecutionResult {
+  command: string;
+  exitCode: number;
+  stdout: string[];
+  stderr: string[];
+  duration: number;
+  timestamp: Date;
+  success: boolean;
+  error?: string;
+}
+
+export interface E2BSandboxOptions {
+  template?: string;
+  timeout?: number;
+  environment?: Record<string, string>;
+  keepAlive?: boolean;
+  workflowId?: string;
+}
+
+export interface E2BPreviewInfo {
+  url: string;
+  port: number;
+  protocol: 'http' | 'https';
+  status: 'starting' | 'running' | 'error';
+  lastCheck: Date;
 }
 
 // ===== Tool Schema Definitions =====
