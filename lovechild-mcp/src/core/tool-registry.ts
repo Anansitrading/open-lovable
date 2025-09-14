@@ -64,26 +64,29 @@ export class ToolRegistry {
   }
 
   private async registerLovableTools(): Promise<void> {
-    // Import real scrape tool and E2B preview tool
+    // Import real tools
     const { ScrapeTool } = await import('../tools/scrape-tool.js');
     const { E2BPreviewTool } = await import('../tools/e2b-preview-tool.js');
-    const { GenerateTool } = await import('../tools/stubs.js');
+    const { AIGenerateTool } = await import('../tools/ai-generate-tool.js');
+    const { AIDeployTool } = await import('../tools/ai-deploy-tool.js');
+    const { AIBuildTool } = await import('../tools/ai-build-tool.js');
 
     this.registerTool(ScrapeTool);
     this.registerTool(E2BPreviewTool);
-    this.registerTool(GenerateTool);
+    this.registerTool(AIGenerateTool);
+    this.registerTool(AIDeployTool);
+    this.registerTool(AIBuildTool);
 
-    logger.info('Lovable tools registered', { count: 3, implemented: ['scrape', 'preview'], stubs: ['generate'] });
+    logger.info('Lovable tools registered', { count: 5, implemented: ['scrape', 'preview', 'generate', 'deploy', 'build'] });
   }
 
   private async registerHybridTools(): Promise<void> {
     // Import stub tools for future hybrid workflow functionality (Phase 4)
-    const { IterateTool, DeployTool } = await import('../tools/stubs.js');
+    const { IterateTool } = await import('../tools/stubs.js');
 
     this.registerTool(IterateTool);
-    this.registerTool(DeployTool);
 
-    logger.info('Hybrid workflow tools registered (stubs)', { count: 2 });
+    logger.info('Hybrid workflow tools registered (stubs)', { count: 1 });
   }
 
   private async registerUtilityTools(): Promise<void> {

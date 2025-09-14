@@ -464,6 +464,13 @@ export class AIProviderError extends LoveChildError {
   }
 }
 
+// Global type declarations
+declare global {
+  var workflowState: Map<string, WorkflowState & { generatedCode?: any }> | undefined;
+}
+
+export {}; // Make this a module
+
 // ===== Utility Types =====
 
 export type DeepPartial<T> = {
