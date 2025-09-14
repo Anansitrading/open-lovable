@@ -41,18 +41,44 @@ export const SpecifyTool: ToolDefinition = {
           url: fromUrl 
         });
 
-        // TODO: Implement Firecrawl web scraping in Phase 2
-        // For now, use a placeholder
-        scrapedContext = {
-          url: fromUrl,
-          content: `# Website Context Placeholder\n\nURL: ${fromUrl}\n\nWeb scraping functionality will be implemented in Phase 2.\nFor now, please provide detailed requirements in the description field.`,
-          timestamp: new Date()
-        };
-        
-        contextLogger.info('Using web scraping placeholder', {
-          correlationId,
-          url: fromUrl
-        });
+        try {
+          // Import and use the real scrape tool
+          const { ScrapeTool } = await import('../scrape-tool.js');
+          const scrapeResult = await ScrapeTool.handler({
+            url: fromUrl,
+            format: 'markdown',
+            includeImages: false,
+            maxDepth: 1
+          }, context);
+
+          if (scrapeResult.success && scrapeResult.data) {
+            scrapedContext = {
+              url: fromUrl,
+              content: scrapeResult.data.content.substring(0, 5000), // Limit context size
+              timestamp: new Date()
+            };
+            
+            contextLogger.info('Website scraped successfully', {
+              correlationId,
+              contentLength: scrapeResult.data.content.length,
+              title: scrapeResult.data.metadata?.title
+            });
+          } else {
+            throw new Error(scrapeResult.error || 'Failed to scrape website');
+          }
+        } catch (scrapeError) {
+          contextLogger.warn('Failed to scrape website, proceeding without context', {
+            correlationId,
+            error: scrapeError instanceof Error ? scrapeError.message : String(scrapeError)
+          });
+          
+          // Fallback to placeholder context
+          scrapedContext = {
+            url: fromUrl,
+            content: `# Website Context Unavailable\n\nURL: ${fromUrl}\n\nFailed to scrape content: ${scrapeError instanceof Error ? scrapeError.message : String(scrapeError)}\n\nPlease provide detailed requirements in the description field.`,
+            timestamp: new Date()
+          };
+        }
       }
 
       // Prepare context for AI generation

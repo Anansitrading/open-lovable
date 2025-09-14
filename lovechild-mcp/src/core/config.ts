@@ -115,8 +115,11 @@ export class ConfigManager {
         provider: sandboxProvider,
         config: sandboxConfig,
       },
-      firecrawl: {
-        apiKey: process.env.FIRECRAWL_API_KEY,
+      integrations: {
+        firecrawl: {
+          apiKey: process.env.FIRECRAWL_API_KEY,
+          baseUrl: process.env.FIRECRAWL_BASE_URL || 'https://api.firecrawl.dev',
+        },
       },
       workspace: {
         directory: process.env.WORKSPACE_DIR || './workspace',

@@ -27,8 +27,11 @@ export const LoveChildConfigSchema = z.object({
       }).optional(),
     }),
   }),
-  firecrawl: z.object({
-    apiKey: z.string(),
+  integrations: z.object({
+    firecrawl: z.object({
+      apiKey: z.string(),
+      baseUrl: z.string().optional().default('https://api.firecrawl.dev'),
+    }),
   }),
   workspace: z.object({
     directory: z.string().default('./workspace'),
@@ -249,6 +252,12 @@ export interface ScrapeResponse extends ToolResponse<{
     description?: string;
     images?: string[];
     links?: string[];
+    keywords?: string[];
+    author?: string;
+    publishedTime?: string;
+    language?: string;
+    statusCode?: number;
+    pagesCrawled?: number;
   };
 }> {}
 
