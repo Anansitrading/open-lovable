@@ -36,6 +36,12 @@ The original Firecrawl-based React app builder that we've enhanced and integrate
    cd lovechild-mcp/lovechild-mcp
    npm install && npm run build
    ```
+   
+   Or if already cloned:
+   ```bash
+   cd /home/david/projects/open-lovable/lovechild-mcp
+   npm install && npm run build
+   ```
 
 2. **Add to Warp MCP Settings**
    
@@ -45,10 +51,12 @@ The original Firecrawl-based React app builder that we've enhanced and integrate
      "LoveChild-Warp-Native": {
        "command": "node",
        "args": ["start-warp-native.js"],
-       "working_directory": "/path/to/lovechild-mcp/lovechild-mcp"
+       "working_directory": "/home/david/projects/open-lovable/lovechild-mcp"
      }
    }
    ```
+   
+   **Note:** Replace the working_directory path with your actual path to the lovechild-mcp subdirectory.
 
 3. **Start Using** (No API Keys Needed!)
    ```bash
