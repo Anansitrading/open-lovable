@@ -39,6 +39,9 @@ export class ToolRegistry {
       // Register utility tools
       await this.registerUtilityTools();
       
+      // Register orchestration tools  
+      await this.registerOrchestrationTools();
+      
       this.initialized = true;
       logger.info(`Tool registration complete: ${this.tools.size} tools registered`);
       
@@ -98,6 +101,25 @@ export class ToolRegistry {
     this.registerTool(CollaborateTool);
 
     logger.info('Utility tools registered (stubs)', { count: 3 });
+  }
+
+  private async registerOrchestrationTools(): Promise<void> {
+    // Import orchestration tools for MCP inter-communication
+    const {
+      RouteTaskTool,
+      ExecuteWorkflowTool,
+      ListMCPsTool,
+      GetRoutingRulesTool,
+      ListWorkflowsTool
+    } = await import('../tools/orchestration-tools.js');
+
+    this.registerTool(RouteTaskTool);
+    this.registerTool(ExecuteWorkflowTool);
+    this.registerTool(ListMCPsTool);
+    this.registerTool(GetRoutingRulesTool);
+    this.registerTool(ListWorkflowsTool);
+
+    logger.info('Orchestration tools registered', { count: 5 });
   }
 
   registerTool(tool: ToolDefinition): void {

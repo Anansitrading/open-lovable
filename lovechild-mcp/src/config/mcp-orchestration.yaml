@@ -1,0 +1,546 @@
+# LoveChild MCP Orchestration Configuration
+# Defines how to coordinate with other MCP servers in Warp terminal
+
+# Registry of available MCP servers and their capabilities
+mcp_servers:
+  perplexity:
+    name: "Perplexity MCP"
+    description: "AI research and reasoning with real-time web data"
+    endpoint:
+      type: "mcp_call"  # Call through Warp's MCP infrastructure
+      server_name: "Perplexity"
+    capabilities:
+      - research
+      - reasoning
+      - current_events
+      - fact_checking
+      - analysis
+    tools:
+      perplexity_ask:
+        description: "Ask Perplexity for research and analysis"
+        use_cases: ["research", "fact_checking", "current_events", "competitive_analysis"]
+        parameters:
+          - messages: "Array of conversation messages"
+      perplexity_research:
+        description: "Deep research with comprehensive analysis"
+        use_cases: ["market_research", "technical_analysis", "comprehensive_reports"]
+        parameters:
+          - query: "Research question"
+          - output_format: "Desired output structure"
+
+  linear:
+    name: "Linear MCP"
+    description: "Issue tracking, project management, task assignment"
+    endpoint:
+      type: "mcp_call"
+      server_name: "Linear"
+    capabilities:
+      - issue_tracking
+      - task_assignment
+      - project_management
+      - bug_reporting
+      - feature_requests
+    tools:
+      create_issue:
+        description: "Create a new Linear issue"
+        use_cases: ["bug_reports", "feature_requests", "task_creation"]
+        parameters:
+          - title: "Issue title"
+          - team: "Team name (Kijko)"
+          - assignee: "User to assign (David)"
+          - labels: "Array of labels (Bug, Feature, etc.)"
+          - priority: "Issue priority"
+          - state: "Issue state (In Progress, Complete)"
+      update_issue:
+        description: "Update existing Linear issue"
+        use_cases: ["status_updates", "completion_tracking"]
+        parameters:
+          - id: "Issue ID"
+          - state: "New state"
+          - assignee: "Assignee"
+      list_issues:
+        description: "List issues with filters"
+        use_cases: ["status_checking", "project_overview"]
+        parameters:
+          - assignee: "Filter by assignee"
+          - state: "Filter by state"
+          - team: "Filter by team"
+
+  poe:
+    name: "POE MCP"
+    description: "Access to powerful external LLMs for advanced reasoning"
+    endpoint:
+      type: "mcp_call"
+      server_name: "POE"
+    capabilities:
+      - advanced_reasoning
+      - code_generation
+      - deep_analysis
+      - creative_tasks
+    models:
+      gpt5: "GPT-5 for advanced reasoning and analysis"
+      claude_opus_4_1: "Claude Opus 4.1 for complex problem solving"
+      o3_pro: "o3-pro for mathematical and logical reasoning"
+      gpt5_codex: "GPT-5-Codex for advanced code generation"
+      o3_deep_research: "o3-deep-research for comprehensive analysis"
+    tools:
+      ask_poe:
+        description: "Query powerful LLMs through POE"
+        use_cases: ["complex_reasoning", "advanced_code_generation", "strategic_planning"]
+        parameters:
+          - bot: "Model to use (claude, gpt, etc.)"
+          - prompt: "Query prompt"
+          - session_id: "Session for context"
+      ask_with_attachment:
+        description: "Query with file attachments"
+        use_cases: ["code_analysis", "document_review", "technical_consultation"]
+        parameters:
+          - bot: "Model to use"
+          - prompt: "Query prompt"
+          - attachment_path: "File path"
+
+  context7:
+    name: "Context7 MCP"
+    description: "Codebase context and knowledge management"
+    endpoint:
+      type: "mcp_call"
+      server_name: "Context7"
+    capabilities:
+      - codebase_analysis
+      - code_context
+      - knowledge_retrieval
+      - documentation_search
+    tools:
+      get_library_docs:
+        description: "Get documentation for libraries"
+        use_cases: ["library_research", "api_documentation", "integration_guidance"]
+        parameters:
+          - context7CompatibleLibraryID: "Library identifier"
+          - topic: "Specific topic"
+      resolve_library_id:
+        description: "Resolve library name to Context7 ID"
+        use_cases: ["library_identification"]
+        parameters:
+          - libraryName: "Library name to search"
+
+  vercel:
+    name: "Vercel MCP"
+    description: "Deployment and hosting management with preview deployments"
+    endpoint:
+      type: "mcp_call" 
+      server_name: "Vercel"
+    capabilities:
+      - deployment
+      - preview_deployments
+      - project_management
+      - domain_management
+      - analytics
+      - team_management
+    tools:
+      deploy_to_vercel:
+        description: "Deploy project to Vercel (production or preview)"
+        use_cases: ["production_deployment", "preview_deployment", "development_testing"]
+        parameters:
+          - branch: "Optional branch name for preview deployment"
+          - environment: "Target environment (production, preview, development)"
+      list_deployments:
+        description: "List project deployments with filtering"
+        use_cases: ["deployment_history", "status_checking", "preview_management"]
+        parameters:
+          - projectId: "Project identifier"
+          - teamId: "Team identifier"
+          - since: "Timestamp to filter deployments"
+          - limit: "Maximum number of deployments to return"
+      get_deployment:
+        description: "Get specific deployment details and status"
+        use_cases: ["deployment_analysis", "troubleshooting", "url_retrieval"]
+        parameters:
+          - idOrUrl: "Deployment ID or URL"
+          - teamId: "Team identifier"
+      list_projects:
+        description: "List all Vercel projects"
+        use_cases: ["project_discovery", "team_overview"]
+        parameters:
+          - teamId: "Team identifier"
+      get_project:
+        description: "Get specific project details"
+        use_cases: ["project_configuration", "settings_review"]
+        parameters:
+          - projectId: "Project identifier"
+          - teamId: "Team identifier"
+      get_deployment_build_logs:
+        description: "Get build logs for debugging"
+        use_cases: ["deployment_debugging", "build_analysis"]
+        parameters:
+          - idOrUrl: "Deployment ID or URL"
+          - teamId: "Team identifier"
+          - limit: "Number of log lines to return"
+
+# Routing rules - determine when to use which MCP tool
+routing_rules:
+  # Research and Analysis
+  - name: "research_query"
+    condition: 
+      task_type: ["research", "analysis", "fact_check"]
+      complexity: ["medium", "high"]
+    primary_mcp: "perplexity"
+    tool: "perplexity_ask"
+    fallback: 
+      mcp: "poe"
+      tool: "ask_poe"
+      params: { bot: "claude" }
+
+  - name: "deep_research"
+    condition:
+      task_type: ["comprehensive_research", "market_analysis", "competitive_analysis"]
+      complexity: ["high"]
+    primary_mcp: "perplexity"
+    tool: "perplexity_research"
+    fallback:
+      mcp: "poe" 
+      tool: "ask_poe"
+      params: { bot: "o3_deep_research" }
+
+  # Complex Reasoning and Code Generation  
+  - name: "advanced_reasoning"
+    condition:
+      task_type: ["complex_reasoning", "strategic_planning", "architectural_decisions"]
+      complexity: ["high"]
+    primary_mcp: "poe"
+    tool: "ask_poe"
+    params: { bot: "claude_opus_4_1" }
+    fallback:
+      mcp: "poe"
+      tool: "ask_poe" 
+      params: { bot: "gpt5" }
+
+  - name: "code_generation"
+    condition:
+      task_type: ["code_generation", "refactoring", "optimization"]
+      context_required: true
+    sequence:
+      - mcp: "context7"
+        tool: "get_library_docs"
+        pass_result_to_next: true
+      - mcp: "poe"
+        tool: "ask_poe"
+        params: { bot: "gpt5_codex" }
+
+  # Issue Tracking and Project Management
+  - name: "bug_reporting"
+    condition:
+      task_type: ["bug_report", "issue_creation"]
+    primary_mcp: "linear"
+    tool: "create_issue"
+    params:
+      team: "Kijko"
+      assignee: "David" 
+      labels: ["Bug"]
+      state: "In Progress"
+
+  - name: "feature_request"
+    condition:
+      task_type: ["feature_request", "enhancement"]
+    primary_mcp: "linear"
+    tool: "create_issue"
+    params:
+      team: "Kijko"
+      assignee: "David"
+      labels: ["Feature"]
+      state: "In Progress"
+
+  - name: "task_completion"
+    condition:
+      task_type: ["mark_complete", "update_status"]
+    primary_mcp: "linear"
+    tool: "update_issue"
+    params:
+      state: "Complete"
+
+  # Deployment and Infrastructure
+  - name: "production_deployment"
+    condition:
+      task_type: ["deploy", "publish", "release"]
+      target: ["vercel", "production"]
+    primary_mcp: "vercel"
+    tool: "deploy_to_vercel"
+    params:
+      environment: "production"
+
+  - name: "preview_deployment"
+    condition:
+      task_type: ["preview", "test_deploy", "feature_preview"]
+      target: ["vercel", "preview", "development"]
+    primary_mcp: "vercel"
+    tool: "deploy_to_vercel"
+    params:
+      environment: "preview"
+
+  - name: "deployment_status"
+    condition:
+      task_type: ["status_check", "deployment_history"]
+    primary_mcp: "vercel"  
+    tool: "list_deployments"
+
+  - name: "deployment_debugging"
+    condition:
+      task_type: ["debug_deploy", "build_logs", "deployment_error"]
+    sequence:
+      - mcp: "vercel"
+        tool: "get_deployment"
+        pass_result_to_next: true
+      - mcp: "vercel"
+        tool: "get_deployment_build_logs"
+        use_previous_result: true
+
+  # Library and Documentation Research
+  - name: "library_research"
+    condition:
+      task_type: ["library_help", "api_docs", "integration_guide"]
+    sequence:
+      - mcp: "context7"
+        tool: "resolve_library_id"
+      - mcp: "context7"
+        tool: "get_library_docs"
+        use_previous_result: true
+
+# Workflow definitions - multi-step processes
+workflows:
+  complete_feature_development:
+    description: "End-to-end feature development workflow"
+    triggers: ["feature_development", "new_feature"]
+    steps:
+      - name: "research"
+        mcp: "perplexity"
+        tool: "perplexity_research"
+        params:
+          query: "Research requirements and best practices"
+      - name: "create_issue"
+        mcp: "linear"
+        tool: "create_issue"
+        params:
+          team: "Kijko"
+          assignee: "David"
+          labels: ["Feature"]
+          state: "In Progress"
+      - name: "get_context"
+        mcp: "context7"
+        tool: "get_library_docs"
+        condition: "library_needed"
+      - name: "generate_code"
+        mcp: "poe"
+        tool: "ask_poe"
+        params:
+          bot: "gpt5_codex"
+        use_context_from: ["research", "get_context"]
+      - name: "deploy"
+        mcp: "vercel"
+        tool: "deploy_to_vercel"
+      - name: "complete_issue"
+        mcp: "linear"
+        tool: "update_issue"
+        params:
+          state: "Complete"
+        use_issue_from: "create_issue"
+
+  bug_fix_workflow:
+    description: "Complete bug fixing workflow"
+    triggers: ["bug_fix", "bug_report"]
+    steps:
+      - name: "analyze_issue"
+        mcp: "poe"
+        tool: "ask_poe"
+        params:
+          bot: "claude_opus_4_1"
+      - name: "create_bug_issue" 
+        mcp: "linear"
+        tool: "create_issue"
+        params:
+          team: "Kijko"
+          assignee: "David"
+          labels: ["Bug"]
+          state: "In Progress"
+      - name: "get_codebase_context"
+        mcp: "context7"
+        tool: "get_library_docs"
+        condition: "context_needed"
+      - name: "generate_fix"
+        mcp: "poe" 
+        tool: "ask_poe"
+        params:
+          bot: "gpt5_codex"
+        use_context_from: ["analyze_issue", "get_codebase_context"]
+      - name: "deploy_fix"
+        mcp: "vercel"
+        tool: "deploy_to_vercel"
+      - name: "mark_complete"
+        mcp: "linear"
+        tool: "update_issue"
+        params:
+          state: "Complete"
+        use_issue_from: "create_bug_issue"
+
+  research_and_implement:
+    description: "Research topic and implement solution"
+    triggers: ["research_implement", "investigate"]
+    steps:
+      - name: "deep_research"
+        mcp: "perplexity"
+        tool: "perplexity_research"
+      - name: "strategic_analysis"
+        mcp: "poe"
+        tool: "ask_poe"
+        params:
+          bot: "o3_deep_research"
+        use_context_from: ["deep_research"]
+      - name: "get_technical_context"
+        mcp: "context7"
+        tool: "get_library_docs"
+        condition: "library_research_needed"
+      - name: "implementation_plan"
+        mcp: "poe"
+        tool: "ask_poe"
+        params:
+          bot: "claude_opus_4_1"
+        use_context_from: ["deep_research", "strategic_analysis", "get_technical_context"]
+
+  iterative_development:
+    description: "Iterative development with preview deployments and feedback"
+    triggers: ["iterate", "develop_iteratively", "preview_and_improve"]
+    steps:
+      - name: "analyze_requirements"
+        mcp: "poe"
+        tool: "ask_poe"
+        params:
+          bot: "claude_opus_4_1"
+      - name: "get_context"
+        mcp: "context7"
+        tool: "get_library_docs"
+        condition: "library_needed"
+      - name: "generate_initial_code"
+        mcp: "poe"
+        tool: "ask_poe"
+        params:
+          bot: "gpt5_codex"
+        use_context_from: ["analyze_requirements", "get_context"]
+      - name: "create_preview_deployment"
+        mcp: "vercel"
+        tool: "deploy_to_vercel"
+        params:
+          environment: "preview"
+      - name: "analyze_preview"
+        mcp: "poe"
+        tool: "ask_poe"
+        params:
+          bot: "claude_opus_4_1"
+        use_context_from: ["create_preview_deployment"]
+      - name: "iterate_improvements"
+        mcp: "poe"
+        tool: "ask_poe"
+        params:
+          bot: "gpt5_codex"
+        use_context_from: ["analyze_preview"]
+      - name: "deploy_final_preview"
+        mcp: "vercel"
+        tool: "deploy_to_vercel"
+        params:
+          environment: "preview"
+      - name: "create_tracking_issue"
+        mcp: "linear"
+        tool: "create_issue"
+        params:
+          team: "Kijko"
+          assignee: "David"
+          labels: ["Development"]
+          state: "In Progress"
+
+  deployment_pipeline:
+    description: "Complete deployment pipeline with testing and monitoring"
+    triggers: ["deploy_pipeline", "full_deployment"]
+    steps:
+      - name: "create_preview"
+        mcp: "vercel"
+        tool: "deploy_to_vercel"
+        params:
+          environment: "preview"
+      - name: "validate_preview"
+        mcp: "vercel"
+        tool: "get_deployment"
+        use_context_from: ["create_preview"]
+      - name: "create_deployment_issue"
+        mcp: "linear"
+        tool: "create_issue"
+        params:
+          team: "Kijko"
+          assignee: "David"
+          labels: ["Deployment"]
+          state: "In Progress"
+      - name: "deploy_production"
+        mcp: "vercel"
+        tool: "deploy_to_vercel"
+        params:
+          environment: "production"
+        condition: "preview_validated"
+      - name: "validate_production"
+        mcp: "vercel"
+        tool: "get_deployment"
+        use_context_from: ["deploy_production"]
+      - name: "complete_deployment_issue"
+        mcp: "linear"
+        tool: "update_issue"
+        params:
+          state: "Complete"
+        use_issue_from: "create_deployment_issue"
+
+# Fallback strategies
+fallback_strategies:
+  - condition: "mcp_unavailable"
+    strategy: "retry_with_delay"
+    max_retries: 3
+    delay_seconds: [1, 3, 5]
+
+  - condition: "tool_error"
+    strategy: "fallback_tool"
+    mappings:
+      perplexity_ask: 
+        fallback_mcp: "poe"
+        fallback_tool: "ask_poe"
+        params: { bot: "claude" }
+      perplexity_research:
+        fallback_mcp: "poe" 
+        fallback_tool: "ask_poe"
+        params: { bot: "o3_deep_research" }
+
+  - condition: "timeout"
+    strategy: "notify_and_continue"
+    notification: "Task timeout - continuing with available data"
+
+# Integration settings
+integration_settings:
+  default_timeout: 30000  # 30 seconds
+  max_concurrent_calls: 5
+  result_caching: true
+  cache_duration: 300  # 5 minutes
+  logging:
+    level: "info"
+    include_payloads: false
+    include_responses: true
+    correlation_tracking: true
+
+# Model preferences for different task types
+model_preferences:
+  reasoning_tasks: 
+    primary: "claude_opus_4_1"
+    fallback: "gpt5"
+  code_generation:
+    primary: "gpt5_codex" 
+    fallback: "claude_opus_4_1"
+  research_tasks:
+    primary: "perplexity_research"
+    fallback: "o3_deep_research"
+  mathematical_analysis:
+    primary: "o3_pro"
+    fallback: "gpt5"
+  creative_tasks:
+    primary: "claude_opus_4_1"
+    fallback: "gpt5"
