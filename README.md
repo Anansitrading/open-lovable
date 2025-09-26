@@ -1,62 +1,144 @@
-# Open Lovable
+# LoveChild MCP Suite 🚀
 
-Chat with AI to build React apps instantly. An example app made by the [Firecrawl](https://firecrawl.dev/?ref=open-lovable-github) team. For a complete cloud solution, check out [Lovable.dev](https://lovable.dev/) ❤️.
+**Advanced AI Development Tools for Warp Terminal**
 
-<img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExbmZtaHFleGRsMTNlaWNydGdianI4NGQ4dHhyZjB0d2VkcjRyeXBucCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ZFVLWMa6dVskQX0qu1/giphy.gif" alt="Open Lovable Demo" width="100%"/>
+A comprehensive suite of Model Context Protocol (MCP) servers and tools that brings spec-driven development and multi-MCP orchestration directly to your Warp terminal - **no API keys required**.
 
-## Setup
+## 🎯 What is LoveChild?
 
-1. **Clone & Install**
-```bash
-git clone https://github.com/firecrawl/open-lovable.git
-cd open-lovable
-pnpm install  # or npm install / yarn install
+LoveChild is a Warp-native development ecosystem that:
+- **Orchestrates Multiple MCPs**: Intelligently coordinates Perplexity, Linear, Context7, Vercel, and more
+- **Zero Configuration**: Leverages Warp's infrastructure - no API keys or environment variables
+- **Spec-Driven Development**: Structured workflows from specification to deployment
+- **Complete Automation**: Multi-step workflows that handle entire development cycles
+
+## 📦 Repository Contents
+
+### 1. LoveChild MCP Server (`/lovechild-mcp`)
+The core MCP server that provides:
+- **SpecKit Tools**: `specify`, `plan`, `tasks`, `status` for structured development
+- **Orchestration Engine**: Routes tasks to the best MCP automatically
+- **Workflow Automation**: Complete bug fixes, feature development, and deployments
+- **Warp Native**: Uses `warp agent run` for all LLM operations
+
+[Full Documentation →](./lovechild-mcp/README.md)
+
+### 2. Open Lovable Legacy (`/app`, `/components`, etc.)
+The original Firecrawl-based React app builder that we've enhanced and integrated.
+
+## 🚀 Quick Start
+
+### Install LoveChild MCP in Warp
+
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/Anansitrading/lovechild-mcp.git
+   cd lovechild-mcp/lovechild-mcp
+   npm install && npm run build
+   ```
+
+2. **Add to Warp MCP Settings**
+   
+   Open Warp Settings → AI → Manage MCP servers and add:
+   ```json
+   {
+     "LoveChild-Warp-Native": {
+       "command": "node",
+       "args": ["start-warp-native.js"],
+       "working_directory": "/path/to/lovechild-mcp/lovechild-mcp"
+     }
+   }
+   ```
+
+3. **Start Using** (No API Keys Needed!)
+   ```bash
+   # Create a specification
+   specify "Build a task management app"
+   
+   # Fix a bug with full automation
+   execute_workflow bug_fix_workflow "Login fails on mobile"
+   
+   # Research and implement
+   route_task research "Best practices for React performance"
+   ```
+
+## 💫 Example Workflows
+
+### Automated Bug Fix
+```javascript
+execute_workflow({
+  workflow_name: "bug_fix_workflow",
+  description: "Users can't upload images"
+})
+```
+**Automatically:**
+1. Analyzes the bug (POE/Claude)
+2. Creates Linear issue (Team: Kijko, assigns to David)
+3. Gets relevant docs (Context7)
+4. Generates fix (POE/GPT-5)
+5. Deploys preview (Vercel)
+6. Marks complete (Linear)
+
+### Feature Development
+```javascript
+execute_workflow({
+  workflow_name: "complete_feature_development",
+  description: "Add dark mode toggle"
+})
 ```
 
-2. **Add `.env.local`**
+## 🎮 Available Tools
 
-```env
-# =================================================================
-# REQUIRED
-# =================================================================
-FIRECRAWL_API_KEY=your_firecrawl_api_key    # https://firecrawl.dev
+### SpecKit Tools (Warp-Powered)
+- `specify` - Generate comprehensive specifications
+- `plan` - Create technical implementation plans
+- `tasks` - Break down into actionable tasks
+- `status` - Track workflow progress
 
-# =================================================================
-# AI PROVIDER - Choose your LLM
-# =================================================================
-ANTHROPIC_API_KEY=your_anthropic_api_key  # https://console.anthropic.com
-OPENAI_API_KEY=your_openai_api_key        # https://platform.openai.com
-GEMINI_API_KEY=your_gemini_api_key        # https://aistudio.google.com/app/apikey
-GROQ_API_KEY=your_groq_api_key            # https://console.groq.com
+### Orchestration Tools
+- `route_task` - Intelligent MCP routing
+- `execute_workflow` - Multi-step automation
+- `list_available_mcps` - Discover capabilities
+- `list_workflows` - See available workflows
 
-# =================================================================
-# SANDBOX PROVIDER - Choose ONE: Vercel (default) or E2B
-# =================================================================
-SANDBOX_PROVIDER=vercel  # or 'e2b'
+## 🔌 Integrated MCPs
 
-# Option 1: Vercel Sandbox (default)
-# Choose one authentication method:
+| MCP | Purpose | Example Usage |
+|-----|---------|---------------|
+| **Perplexity** | Research & Analysis | Best practices, documentation |
+| **Linear** | Issue Tracking | Bug reports, feature tracking |
+| **Context7** | Library Docs | API references, examples |
+| **Vercel** | Deployment | Preview URLs, production deploys |
+| **POE/Dart** | Code Generation | Implementation, fixes |
 
-# Method A: OIDC Token (recommended for development)
-# Run `vercel link` then `vercel env pull` to get VERCEL_OIDC_TOKEN automatically
-VERCEL_OIDC_TOKEN=auto_generated_by_vercel_env_pull
+## 🏗️ Architecture
 
-# Method B: Personal Access Token (for production or when OIDC unavailable)
-# VERCEL_TEAM_ID=team_xxxxxxxxx      # Your Vercel team ID 
-# VERCEL_PROJECT_ID=prj_xxxxxxxxx    # Your Vercel project ID
-# VERCEL_TOKEN=vercel_xxxxxxxxxxxx   # Personal access token from Vercel dashboard
-
-# Option 2: E2B Sandbox
-# E2B_API_KEY=your_e2b_api_key      # https://e2b.dev
+```
+Warp Terminal
+      ↓
+LoveChild MCP Server
+      ├── SpecKit Tools → Warp CLI (warp agent run)
+      └── Orchestration → call_mcp_tool → Other MCPs
 ```
 
-3. **Run**
-```bash
-pnpm dev  # or npm run dev / yarn dev
-```
+## 🤝 Contributing
 
-Open [http://localhost:3000](http://localhost:3000)
+We welcome contributions! Key areas:
+- Additional MCP integrations
+- New workflow templates
+- Enhanced routing logic
+- Documentation improvements
 
-## License
+## 📄 License
 
-MIT
+MIT License - see [LICENSE](./LICENSE) file for details.
+
+## 🙏 Credits
+
+- Built on the [Model Context Protocol](https://modelcontextprotocol.io/) by Anthropic
+- Inspired by [Open Lovable](https://github.com/firecrawl/open-lovable) from Firecrawl
+- Powered by [Warp Terminal](https://www.warp.dev/)'s native AI infrastructure
+
+---
+
+**LoveChild MCP** - Where specification meets automation in your terminal.
