@@ -1,0 +1,11 @@
+{
+  "LoveChild-Orchestrator": {
+    "command": "node",
+    "args": ["dist/index.js"],
+    "working_directory": "/home/david/projects/open-lovable/lovechild-mcp",
+    "env": {
+      "ANTHROPIC_API_KEY": "${ANTHROPIC_API_KEY}",
+      "NODE_ENV": "production"
+    }
+  }
+}
