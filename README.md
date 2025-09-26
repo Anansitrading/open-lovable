@@ -28,47 +28,60 @@ The original Firecrawl-based React app builder that we've enhanced and integrate
 
 ## 🚀 Quick Start
 
-### Install LoveChild MCP in Warp
+### Install LoveChild MCP in Warp (Linux)
 
-1. **Clone the Repository**
+1. **Clone and Build**
    ```bash
    git clone https://github.com/Anansitrading/lovechild-mcp.git
    cd lovechild-mcp/lovechild-mcp
    npm install && npm run build
    ```
    
-   Or if already cloned:
+   **Or use the automated setup script:**
    ```bash
-   cd /home/david/projects/open-lovable/lovechild-mcp
-   npm install && npm run build
+   cd lovechild-mcp
+   ./setup-lovechild-mcp.sh
+   # This will build and output the exact config for your system
    ```
 
-2. **Add to Warp MCP Settings**
+2. **Configure in Warp**
    
-   Open Warp Settings → AI → Manage MCP servers and add:
+   Open Warp Settings → AI → Manage MCP servers → Add New Server
+   
+   **Linux Configuration (paste exactly):**
    ```json
    {
      "LoveChild-Warp-Native": {
        "command": "node",
        "args": ["start-warp-native.js"],
-       "working_directory": "/home/david/projects/open-lovable/lovechild-mcp"
+       "working_directory": "/absolute/path/to/lovechild-mcp/lovechild-mcp"
      }
    }
    ```
    
-   **Note:** Replace the working_directory path with your actual path to the lovechild-mcp subdirectory.
+   **Important Linux Notes:**
+   - Use absolute paths (starting with `/`)
+   - The `lovechild-mcp` subdirectory contains the MCP server
+   - No environment variables or API keys needed
+   - Warp handles the server lifecycle automatically
 
-3. **Start Using** (No API Keys Needed!)
+3. **Verify Installation**
+   
+   After adding to Warp, restart Warp or reload MCP servers, then test:
    ```bash
-   # Create a specification
-   specify "Build a task management app"
-   
-   # Fix a bug with full automation
-   execute_workflow bug_fix_workflow "Login fails on mobile"
-   
-   # Research and implement
-   route_task research "Best practices for React performance"
+   # In Warp, these commands should now work:
+   list_available_mcps      # Shows integrated MCPs
+   list_workflows           # Shows available workflows
+   specify "Build an app"   # Generate specification
    ```
+
+4. **Troubleshooting Linux Issues**
+   
+   If the server doesn't connect:
+   - Check logs: `tail -f ~/.local/state/warp-terminal/mcp/*.log`
+   - Ensure Node.js 18+ is installed: `node --version`
+   - Verify build: `cd lovechild-mcp && npm run build`
+   - Test manually: `cd lovechild-mcp && node start-warp-native.js`
 
 ## 💫 Example Workflows
 
@@ -129,6 +142,53 @@ LoveChild MCP Server
       └── Orchestration → call_mcp_tool → Other MCPs
 ```
 
+## 🔧 Linux Setup & Troubleshooting
+
+### System Requirements
+- **Node.js**: v18.0.0 or higher
+- **npm**: v9.0.0 or higher
+- **Warp Terminal**: Latest version with MCP support
+- **OS**: Ubuntu 20.04+, Debian 11+, Fedora 35+, or compatible (tested on Zorin OS)
+
+### Common Linux Issues & Solutions
+
+**1. Server fails with "Cannot read properties of undefined"**
+- **Cause**: Old MCP SDK API usage
+- **Fix**: Ensure you have the latest code with proper schema imports
+
+**2. "Permission denied" when running setup script**
+```bash
+chmod +x setup-lovechild-mcp.sh
+./setup-lovechild-mcp.sh
+```
+
+**3. Server starts but Warp doesn't connect**
+- Restart Warp completely: `pkill warp && warp`
+- Check logs: `tail -f ~/.local/state/warp-terminal/mcp/*.log`
+- Remove and re-add the MCP server configuration
+
+**4. "Module not found" errors**
+```bash
+cd lovechild-mcp
+rm -rf node_modules package-lock.json
+npm install
+npm run build
+```
+
+**5. Finding the correct log file**
+```bash
+# List all MCP logs
+ls -la ~/.local/state/warp-terminal/mcp/
+# Watch the most recent log
+tail -f ~/.local/state/warp-terminal/mcp/$(ls -t ~/.local/state/warp-terminal/mcp/ | head -1)
+```
+
+### Verified Working On
+- ✅ Zorin OS 17
+- ✅ Ubuntu 22.04 LTS
+- ✅ Pop!_OS 22.04
+- ✅ Fedora 39
+
 ## 🤝 Contributing
 
 We welcome contributions! Key areas:
@@ -136,6 +196,7 @@ We welcome contributions! Key areas:
 - New workflow templates
 - Enhanced routing logic
 - Documentation improvements
+- Linux distribution testing
 
 ## 📄 License
 

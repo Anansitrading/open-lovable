@@ -67,12 +67,12 @@ LoveChild1.0 is a Warp-native MCP server that leverages Warp's built-in capabili
 - Warp terminal with MCP support
 - **NO API keys required** - uses Warp's native infrastructure
 
-### Quick Start
+### Quick Start (Linux/Unix)
 
 1. **Clone and Install**
    ```bash
-   git clone https://github.com/Anansitrading/open-lovable.git
-   cd open-lovable/lovechild-mcp
+   git clone https://github.com/Anansitrading/lovechild-mcp.git
+   cd lovechild-mcp/lovechild-mcp
    npm install
    ```
 
@@ -80,22 +80,44 @@ LoveChild1.0 is a Warp-native MCP server that leverages Warp's built-in capabili
    ```bash
    npm run build
    ```
+   
+   **Or use the automated setup script from the root:**
+   ```bash
+   cd ..
+   ./setup-lovechild-mcp.sh
+   ```
 
 3. **Configure in Warp**
    
-   Open Warp MCP settings (Settings → AI → Manage MCP servers) and add:
+   Open Warp Settings → AI → Manage MCP servers → Add New Server
    
+   **Paste this configuration (adjust path to your location):**
    ```json
    {
      "LoveChild-Warp-Native": {
        "command": "node",
        "args": ["start-warp-native.js"],
-       "working_directory": "/home/david/projects/open-lovable/lovechild-mcp"
+       "working_directory": "/absolute/path/to/lovechild-mcp/lovechild-mcp"
      }
    }
    ```
+   
+   **Linux-Specific Notes:**
+   - Use absolute paths starting with `/`
+   - The MCP server runs in the `lovechild-mcp` subdirectory
+   - Logs are stored in `~/.local/state/warp-terminal/mcp/`
+   - No environment variables or API keys required
 
-   That's it! No environment variables or API keys needed.
+4. **Verify Setup**
+   ```bash
+   # Test server manually:
+   node start-warp-native.js
+   # Should see "LoveChild MCP Server ready!"
+   # Press Ctrl+C to stop
+   
+   # Check Warp logs if issues:
+   tail -f ~/.local/state/warp-terminal/mcp/*.log
+   ```
 
 ## 🔧 How It Works
 
