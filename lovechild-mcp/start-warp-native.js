@@ -7,6 +7,7 @@
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { logger } from './dist/core/logger.js';
 
 console.error('🚀 Starting LoveChild MCP Server in Warp Native Mode...');
@@ -85,7 +86,7 @@ async function main() {
   });
   
   // Handle tool listing
-  server.setRequestHandler('tools/list', async () => {
+  server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
       tools: tools.map(tool => ({
         name: tool.name,
@@ -100,7 +101,7 @@ async function main() {
   });
   
   // Handle tool execution
-  server.setRequestHandler('tools/call', async (request) => {
+  server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { name, arguments: args } = request.params;
     
     const tool = tools.find(t => t.name === name);
